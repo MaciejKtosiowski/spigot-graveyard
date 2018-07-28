@@ -4,7 +4,7 @@ Yet another spigot plugin that adds graves
  * gtp - Teleports you to a grave(a death info card is required). Usage: ```/gtp``` holding a death info card.
  * keepinventory - Per-player one time keepinventory. Usage: ```/keepinventory <player>``` or (in-game only) ```/keepinventory```
  * giveexpvoucher - Give you a piece of paper that is a EXP voucher. Usage: ```/giveexpvoucher <amount>```
- * removeinfos - Removes death info cards from your inventory.
+ * removeinfos - Removes death info cards from your inventory. Usage: ```/removeinfos```
 ## Config.yml
 Default config.yml file
 ```
@@ -23,4 +23,5 @@ gtp:
   # Should /gtp be enabled?
 keepinventory:
   enable_command: true
-  # Should /keepinventory be enabled?```
+  # Should /keepinventory be enabled?
+```
