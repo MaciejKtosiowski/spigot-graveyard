@@ -43,6 +43,9 @@ permissions:
     description: Gives all permissions from this plugin. BE CAREFUL!!!
     children:
      - graveyard.user
+  graveyard.admin:
+    description: Gives all permissions from this plugin. BE CAREFUL!!!
+    children:
      - graveyard.cheat.voucher
      - graveyard.cheat.gtp
      - graveyard.cheat.keepinventory
