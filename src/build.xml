@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<project name="AutoExport" default="CreateJar">
+	<property name="plugins" location="/home/maciek/Minecraft serwery/WETest/plugins"  />
+	<property name="plugins2" location="/home/maciek/Minecraft serwery/hub/plugins"  />
+	<property name="plugins3" location="/home/maciek/Minecraft serwery/1.13-temp/plugins"  />
+	<target name="CreateJar" description="Create Jar file">
+		<exec executable="/bin/cp">
+			<arg value="/home/maciek/MacieksBans/Graveyard/src/plugin.yml"/>
+			<arg value="/home/maciek/MacieksBans/Graveyard/bin/"/>
+		</exec>
+		<exec executable="/bin/cp">
+			<arg value="/home/maciek/MacieksBans/Graveyard/src/config.yml"/>
+			<arg value="/home/maciek/MacieksBans/Graveyard/bin/"/>
+		</exec>
+		<echo>[   ]Building the jar</echo>
+		<!--
+		<jar jarfile="${plugins}/graveyard.jar" basedir="/home/maciek/MacieksBans/Graveyard/bin" includes="*.yml, **/*.* */*"/>
+		<jar jarfile="${plugins2}/graveyard.jar" basedir="/home/maciek/MacieksBans/Graveyard/bin" includes="*.yml, **/*.* */*"/>
+		-->
+		<jar jarfile="${plugins3}/graveyard.jar" basedir="/home/maciek/MacieksBans/Graveyard/bin" includes="*.yml, **/*.* */*"/>
+		<echo>[ V ]Building the jar</echo>
+		<echo>[N/A]Reloading the server</echo>
+		<exec executable="/usr/bin/screen">
+			<arg value="-x"/>
+			<arg value="-r"/>
+			<arg value="1.13-temp"/>
+			<arg value="-p"/>
+			<arg value="0"/>
+			<arg value="-X"/>
+			<arg value="stuff"/>
+			<arg value="say (Graveyard) RELOADING!!!!!^Mrl^M"/>
+		</exec>
+		<!---<exec executable="/usr/bin/screen">
+			<arg value="-x"/>
+			<arg value="-r"/>
+			<arg value="MCWETest"/>
+			<arg value="-p"/>
+			<arg value="0"/>
+			<arg value="-X"/>
+			<arg value="stuff"/>
+			<arg value="say (Graveyard) RELOADING!!!!!^Mrl^M"/>
+		</exec>
+		<exec executable="/usr/bin/screen">
+			<arg value="-x"/>
+			<arg value="-r"/>
+			<arg value="MChub"/>
+			<arg value="-p"/>
+			<arg value="0"/>
+			<arg value="-X"/>
+			<arg value="stuff"/>
+			<arg value="say (Graveyard) RELOADING!!!!!^Mrl^M"/>
+		</exec> -->
+	</target>
+</project>
