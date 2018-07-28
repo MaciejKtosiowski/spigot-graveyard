@@ -1,0 +1,56 @@
+main: local.mm2pl.graves.GraveMain
+name: "Graveyard"
+version: '1.0'
+description: Adds Graves
+author: Mm2PL
+api-version: 1.13
+website: "https://github.com/MaciejKtosiowski/spigot-graveyard"
+commands:
+  giveexpvoucher:
+    description: Gives you an exp vuocher for <amount>
+    usage: "/giveexpvoucher <amount>"
+    permission: graveyard.cheat.voucher
+    permission-message: "§4The permission §agraveyard.cheat.voucher§4 is required to use this command§r"
+  removeinfos:
+    description: Removes all death infos from you inventory.
+    usage: "/removeinfos"
+  gtp:
+    description: Teleports you to a grave(death info is required)
+    usage: "/gtp"
+    permission: graveyard.cheat.gtp
+    permission-message: "§4The permission §agraveyard.cheat.gtp§4 is required to use this command§r"
+  keepinventory:
+    description: Enable keep inventory for one player
+    usage: "/keepinventory <player=self>"
+permissions:
+  graveyard.cheat.voucher:
+    description: Enabled you to use /giveexpvoucher
+    default: op
+  graveyard.cheat.gtp:
+    description: Enabled you to use /gtp
+    default: op
+  graveyard.cheat.keepinventory:
+    description: Enabled you to use /keepinventory
+    default: op
+  graveyard.user:
+    description: User commands
+    default: true
+    children:
+     - graveyard.removeinfos
+  graveyard.removeinfos:
+    description: Allows you to use /removeinfos
+  graveyard.admin:
+    description: Gives all permissions from this plugin. BE CAREFUL!!!
+    children:
+     - graveyard.user
+     - graveyard.cheat.voucher
+     - graveyard.cheat.gtp
+     - graveyard.cheat.keepinventory
+     - graveyard.msgs
+  graveyard.msgs:
+    description: Recive messages.
+    default: op
+  graveyard.*:
+    description: Gives all permissions from this plugin. BE CAREFUL!!!
+    children:
+     - graveyard.admin
