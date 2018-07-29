@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -64,6 +65,7 @@ public class EventListener implements Listener{
                     {
                         ItemStack air = new ItemStack(Material.AIR, 1);
                         e.getPlayer().getInventory().setItemInMainHand(air);
+                        e.setCancelled(true);
                     }else {
                         ItemStack other_vouchers = new ItemStack(item);
                         other_vouchers.setItemMeta(meta);
@@ -86,6 +88,10 @@ public class EventListener implements Listener{
 //            Bukkit.broadcastMessage("holder = chest");
             Location loc = inv.getLocation();
             org.bukkit.block.Chest chest2 = (org.bukkit.block.Chest) loc.getBlock().getState();
+            if(chest2.getCustomName() == null)
+            {
+                return;
+            }
             if(chest2.getCustomName().matches(pl.getName()+"'s grave\\. \\([0-9][0-9]:[0-9][0-9] [0-9]+\\.[0-9]+\\.[0-9]+\\)"))
             {
                 boolean isEmpty = true;
@@ -104,8 +110,28 @@ public class EventListener implements Listener{
                 }
                 if(isEmpty)
                 {
+                    pl.sendMessage("§aThe grave disappears...");
                     loc.getBlock().getRelative(BlockFace.EAST).setType(Material.AIR);
                     loc.getBlock().setType(Material.AIR);
+                    EntityEquipment eq = pl.getEquipment();
+                    ItemStack info = eq.getItemInMainHand();
+                    if(info == null)
+                    {
+                        return;
+                    }
+                    if(info.hasItemMeta())
+                    {
+                        ItemMeta meta = info.getItemMeta();
+                        if(!meta.hasLore())
+                        {
+                            return;
+                        }
+                        List<String> lore = meta.getLore();
+                        if(lore.contains("§0GRDeathinfo"))
+                        {
+                            eq.setItemInMainHand(null);
+                        }
+                    }
                 }
             }
         }
@@ -185,9 +211,9 @@ public class EventListener implements Listener{
                 List<String> lore = meta.getLore();
                 if(lore.contains("§0gSoulbound"))
                 {
-//                    ItemStack clone = new ItemStack(item);
-//                    clone.setItemMeta(meta);
-                    savedItems.add(item.clone());
+                    ItemStack clone = new ItemStack(item);
+                    clone.setItemMeta(meta);
+                    savedItems.add(item);
                     wasAdded = true;
                 }
             }
@@ -196,22 +222,34 @@ public class EventListener implements Listener{
                 binv.addItem(item);
             }
         }
-        binv.setContents(items);
+//        binv.setContents(items);
         
-        int exp = pl.getTotalExperience();
-        pl.setTotalExperience(0);
-        pl.setExp(0.0f);
-        pl.setLevel(0);
-        e.setDroppedExp(0);
         
+        int exp = 0;
+        exp = pl.getTotalExperience();
         if(GraveMain.config.getBoolean("expvoucher.spawn_on_death"))
         {
+//            Bukkit.broadcastMessage(String.valueOf(pl.getTotalExperience()));
+//            Bukkit.broadcastMessage(String.valueOf(pl.getExp()));
+//            Bukkit.broadcastMessage(String.valueOf(pl.getLevel()));
+            pl.setTotalExperience(0);
+            pl.setExp(0.0f);
+            pl.setLevel(0);
+            e.setDroppedExp(0);
             ItemStack voucher = new ItemStack(Material.PAPER, 1);
             ItemMeta meta2 = voucher.getItemMeta();
             meta2.setDisplayName("EXP voucher. (death)");
             List<String> lore = new LinkedList<String>();
-            lore.add("§0g"+String.valueOf(exp*GraveMain.config.getDouble("expvoucher.value")));
+            lore.add("Right-click to reedem the experience");
+            String value = String.valueOf(Math.round(exp*GraveMain.config.getDouble("expvoucher.value")));
+            lore.add("Value: "+value);
             lore.add("§aCreated: "+new Date(System.currentTimeMillis()).toString());
+            if(GraveMain.config.getBoolean("expvoucher.soulbind"))
+            {
+                lore.add("§o§6Soulbound§r");
+                lore.add("§0gSoulbound");
+            }
+            lore.add("§0g"+value);
             meta2.setLore(lore);
             voucher.setItemMeta(meta2);
             binv.addItem(voucher);
@@ -230,6 +268,7 @@ public class EventListener implements Listener{
         deathInfoList.add("EXP: "+String.valueOf(exp));
         deathInfoList.add("§o§6Soulbound§r");
         deathInfoList.add("§0gSoulbound");
+        deathInfoList.add("§0GRDeathinfo");
         meta.setLore(deathInfoList);
         
         String lockstr = "Death info - "+String.valueOf(System.currentTimeMillis());
