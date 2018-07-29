@@ -190,43 +190,82 @@ public class EventListener implements Listener{
         block2.setBlockData(chest2);
         
         org.bukkit.block.Chest chest3 = (org.bukkit.block.Chest) block.getState();
+        int exp = 0;
+        exp = pl.getTotalExperience();
+        ItemStack deathInfocard = new ItemStack(Material.PAPER, 1);
+        ItemMeta dmeta = deathInfocard.getItemMeta();
+        List<String> deathInfoList = new LinkedList<String>();
+//        deathInfoList.add("Name: "+pl.getName());
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm d.M.y");
+        String today = formatter.format(date);
+        deathInfoList.add(e.getDeathMessage());
+        deathInfoList.add(today);
+        deathInfoList.add("Coords:");
+        deathInfoList.add("X: "+String.valueOf(loc.getBlockX())+" Y: "+String.valueOf(loc.getBlockY())+" Z: "+String.valueOf(loc.getBlockZ()));
+        deathInfoList.add("EXP: "+String.valueOf(exp));
+        deathInfoList.add("§o§6Soulbound§r");
+        deathInfoList.add("§0gSoulbound");
+        deathInfoList.add("§0GRDeathinfo");
+        dmeta.setLore(deathInfoList);
+        
+        String lockstr = "Death info - "+String.valueOf(System.currentTimeMillis());
+        dmeta.setDisplayName(lockstr);
+        chest3.setLock(lockstr);
+//        Bukkit.broadcastMessage(String.valueOf(chest3.isLocked()));
+//        Bukkit.broadcastMessage(String.valueOf(chest3.getLock()));
+        chest3.setCustomName(pl.getName()+"'s grave. ("+today+")");
+        chest3.update();
+        deathInfocard.setItemMeta(dmeta);
+//        chest3.update();
         Inventory binv = chest3.getInventory();
         ItemStack[] items = inv.getContents();
         List<ItemStack> savedItems = new LinkedList<ItemStack>();
         boolean wasAdded = false;
-        for (ItemStack item : items)
+        Bukkit.broadcastMessage(String.valueOf(items.length));
+//        binv.setContents(items);
+        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
+        binv.setContents(inv.getContents());
+        
+        for (int i = 0; i <= inv.getSize(); i++)
         {
+            ItemStack item = inv.getItem(i);
+            wasAdded = false;
             if(item == null)
             {
+                Bukkit.broadcastMessage(String.valueOf(i));
+                Bukkit.broadcastMessage("NULL");
                 continue;
             }
-            wasAdded = false;
             if(item.hasItemMeta())
             {
                 ItemMeta meta = item.getItemMeta();
-                if(!meta.hasLore())
+                if(meta.hasLore())
                 {
-                    continue;
-                }
-                List<String> lore = meta.getLore();
-                if(lore.contains("§0gSoulbound"))
-                {
-                    ItemStack clone = new ItemStack(item);
-                    clone.setItemMeta(meta);
-                    savedItems.add(item);
-                    wasAdded = true;
+                    List<String> lore = meta.getLore();
+                    if(lore.contains("§0gSoulbound"))
+                    {
+//                        ItemStack clone = new ItemStack(item);
+//                        clone.setItemMeta(meta);
+                        
+                        savedItems.add(item);
+                        wasAdded = true;
+                        binv.remove(item);
+                    }
                 }
             }
-            if(!wasAdded)
-            {
-                binv.addItem(item);
-            }
+            Bukkit.broadcastMessage(String.valueOf(i));
+            Bukkit.broadcastMessage(item.getType().toString());
+//            if(!wasAdded)
+//            {
+//                binv.addItem(item);
+//            }
         }
-//        binv.setContents(items);
+        
+        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
         
         
-        int exp = 0;
-        exp = pl.getTotalExperience();
+        
         if(GraveMain.config.getBoolean("expvoucher.spawn_on_death"))
         {
 //            Bukkit.broadcastMessage(String.valueOf(pl.getTotalExperience()));
@@ -252,33 +291,14 @@ public class EventListener implements Listener{
             lore.add("§0g"+value);
             meta2.setLore(lore);
             voucher.setItemMeta(meta2);
-            binv.addItem(voucher);
+            binv.setItem(binv.getSize()-1, voucher);
         }
-        ItemStack deathInfocard = new ItemStack(Material.PAPER, 1);
-        ItemMeta meta = deathInfocard.getItemMeta();
-        List<String> deathInfoList = new LinkedList<String>();
-//        deathInfoList.add("Name: "+pl.getName());
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm d.M.y");
-        String today = formatter.format(date);
-        deathInfoList.add(e.getDeathMessage());
-        deathInfoList.add(today);
-        deathInfoList.add("Coords:");
-        deathInfoList.add("X: "+String.valueOf(loc.getBlockX())+" Y: "+String.valueOf(loc.getBlockY())+" Z: "+String.valueOf(loc.getBlockZ()));
-        deathInfoList.add("EXP: "+String.valueOf(exp));
-        deathInfoList.add("§o§6Soulbound§r");
-        deathInfoList.add("§0gSoulbound");
-        deathInfoList.add("§0GRDeathinfo");
-        meta.setLore(deathInfoList);
         
-        String lockstr = "Death info - "+String.valueOf(System.currentTimeMillis());
-        meta.setDisplayName(lockstr);
-        chest3.setLock(lockstr);
-//        Bukkit.broadcastMessage(String.valueOf(chest3.isLocked()));
-//        Bukkit.broadcastMessage(String.valueOf(chest3.getLock()));
-        chest3.setCustomName(pl.getName()+"'s grave. ("+today+")");
-        chest3.update();
-        deathInfocard.setItemMeta(meta);
+        
+//        if(1!=2)
+//        {
+//            return;
+//        }
         inv.clear();
         inv.addItem(deathInfocard);
         for (ItemStack item : savedItems)
