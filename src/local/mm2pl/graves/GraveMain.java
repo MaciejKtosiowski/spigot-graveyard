@@ -18,6 +18,7 @@ public class GraveMain extends JavaPlugin{
     public static FileConfiguration config;
     public static File configf;
     public static Map<String, Boolean> keepinventory;
+    public static final String graveRegex = "'s grave\\. \\([0-9][0-9]:[0-9][0-9] [0-9]+\\.[0-9]+\\.[0-9]+\\)";
 //    public void saveConfig() {
 //        configf = new File(getDataFolder(), "config.yml");
 //        if (!configf.exists()) {

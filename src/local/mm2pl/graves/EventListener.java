@@ -92,7 +92,7 @@ public class EventListener implements Listener{
             {
                 return;
             }
-            if(chest2.getCustomName().matches(pl.getName()+"'s grave\\. \\([0-9][0-9]:[0-9][0-9] [0-9]+\\.[0-9]+\\.[0-9]+\\)"))
+            if(chest2.getCustomName().matches(pl.getName()+GraveMain.graveRegex))
             {
                 boolean isEmpty = true;
                 for (ItemStack item : inv)
@@ -219,22 +219,20 @@ public class EventListener implements Listener{
         deathInfocard.setItemMeta(dmeta);
 //        chest3.update();
         Inventory binv = chest3.getInventory();
-        ItemStack[] items = inv.getContents();
+//        ItemStack[] items = inv.getContents();
         List<ItemStack> savedItems = new LinkedList<ItemStack>();
-        boolean wasAdded = false;
-        Bukkit.broadcastMessage(String.valueOf(items.length));
+//        Bukkit.broadcastMessage(String.valueOf(items.length));
 //        binv.setContents(items);
-        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
+//        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
         binv.setContents(inv.getContents());
         
         for (int i = 0; i <= inv.getSize(); i++)
         {
             ItemStack item = inv.getItem(i);
-            wasAdded = false;
             if(item == null)
             {
-                Bukkit.broadcastMessage(String.valueOf(i));
-                Bukkit.broadcastMessage("NULL");
+//                Bukkit.broadcastMessage(String.valueOf(i));
+//                Bukkit.broadcastMessage("NULL");
                 continue;
             }
             if(item.hasItemMeta())
@@ -249,21 +247,20 @@ public class EventListener implements Listener{
 //                        clone.setItemMeta(meta);
                         
                         savedItems.add(item);
-                        wasAdded = true;
                         binv.remove(item);
                     }
                 }
             }
-            Bukkit.broadcastMessage(String.valueOf(i));
-            Bukkit.broadcastMessage(item.getType().toString());
+//            Bukkit.broadcastMessage(String.valueOf(i));
+//            Bukkit.broadcastMessage(item.getType().toString());
 //            if(!wasAdded)
 //            {
 //                binv.addItem(item);
 //            }
         }
         
-        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
-        
+//        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
+//        
         
         
         if(GraveMain.config.getBoolean("expvoucher.spawn_on_death"))
