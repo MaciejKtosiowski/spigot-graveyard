@@ -1,11 +1,21 @@
 main: local.mm2pl.graves.GraveMain
 name: "Graveyard"
-version: '1.0'
+version: '1.1'
 description: Adds Graves
 author: Mm2PL
 api-version: 1.13
 website: "https://github.com/MaciejKtosiowski/spigot-graveyard"
 commands:
+  soulbind:
+    description: Soulbind an item
+    usage: "/soulbind [(-r|--remove)]"
+    permission: graveyard.cheat.soulbind
+    permission-message: "§4The permission §agraveyard.cheat.soulbind§4 is required to use this command§r"
+  opengrave:
+    description: Opens a grave that is locked
+    usage: "/opengrave\n(admin only): /opengrave [(-f|--force)]"
+    permission: graveyard.opengrave
+    permission-message: "§4The permission §agraveyard.opengrave§4 is required to use this command, ask an admin for help§r"
   giveexpvoucher:
     description: Gives you an exp vuocher for <amount>
     usage: "/giveexpvoucher <amount>"
@@ -14,6 +24,8 @@ commands:
   removeinfos:
     description: Removes all death infos from you inventory.
     usage: "/removeinfos"
+    permission: graveyard.removeinfos
+    permission-message: "§4The permission §agraveyard.removeinfos§4 is required to use this command, ask an admin for help§r"
   gtp:
     description: Teleports you to a grave(death info is required)
     usage: "/gtp"
@@ -23,37 +35,40 @@ commands:
     description: Enable keep inventory for one player
     usage: "/keepinventory <player=self>"
 permissions:
-  graveyard.cheat.voucher:
-    description: Enabled you to use /giveexpvoucher
-    default: op
-  graveyard.cheat.gtp:
-    description: Enabled you to use /gtp
-    default: op
-  graveyard.cheat.keepinventory:
-    description: Enabled you to use /keepinventory
-    default: op
   graveyard.user:
     description: User commands
     default: true
     children:
      - graveyard.removeinfos
+     - graveyard.opengrave
   graveyard.removeinfos:
     description: Allows you to use /removeinfos
-  graveyard.admin:
-    description: Gives all permissions from this plugin. BE CAREFUL!!!
-    children:
-     - graveyard.user
-  graveyard.admin:
-    description: Gives all permissions from this plugin. BE CAREFUL!!!
-    children:
-     - graveyard.cheat.voucher
-     - graveyard.cheat.gtp
-     - graveyard.cheat.keepinventory
-     - graveyard.msgs
-  graveyard.msgs:
-    description: Recive messages.
-    default: op
+  graveyard.opengrave:
+    description: Allows you to use /opengrave (to open your own graves)
+  graveyard.opengrave.force:
+    description: Allows you to use "/opengrave --force" (to open any grave)
   graveyard.*:
     description: Gives all permissions from this plugin. BE CAREFUL!!!
     children:
      - graveyard.admin
+  graveyard.admin:
+    description: Gives all permissions from this plugin. BE CAREFUL!!!
+    default: op
+    children:
+     - graveyard.user
+     - graveyard.cheat.soulbind
+     - graveyard.cheat.voucher
+     - graveyard.cheat.gtp
+     - graveyard.cheat.keepinventory
+     - graveyard.opengrave.force
+     - graveyard.msgs
+  graveyard.cheat.soulbind:
+    description: Allows you to use /soulbind
+  graveyard.cheat.voucher:
+    description: Allows you to use /giveexpvoucher
+  graveyard.cheat.gtp:
+    description: Allows you to use /gtp
+  graveyard.cheat.keepinventory:
+    description: Allows you to use /keepinventory
+  graveyard.msgs:
+    description: Recive messages.

@@ -12,12 +12,14 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.type.Chest;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
@@ -136,6 +138,29 @@ public class EventListener implements Listener{
             }
         }
         
+    }
+    @EventHandler
+    public void onPlayerItemDrop(PlayerDropItemEvent e)
+    {
+        if(GraveMain.config.getBoolean("soulbound.prevent_dropping"))
+        {
+            Item i = e.getItemDrop();
+            ItemStack item = i.getItemStack();
+            ItemMeta meta = item.getItemMeta();
+            if(!meta.hasLore())
+            {
+                return;
+            }
+            for (String line : meta.getLore())
+            {
+                if(GraveMain.checkSoulbound(line))
+                {
+                    e.getPlayer().sendMessage("§4You cannot drop soulbound items.§r");
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        }
     }
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e)
@@ -282,7 +307,7 @@ public class EventListener implements Listener{
             lore.add("§aCreated: "+new Date(System.currentTimeMillis()).toString());
             if(GraveMain.config.getBoolean("expvoucher.soulbind"))
             {
-                lore.add("§o§6Soulbound§r");
+                lore.add("§6Soulbound§r");
                 lore.add("§0gSoulbound");
             }
             lore.add("§0g"+value);

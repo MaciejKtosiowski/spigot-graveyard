@@ -1,0 +1,43 @@
+expvoucher:
+  spawn_on_death: true
+  # Should exp vouchers spawn on death
+  # ----------------------------------
+  value: 1
+  # How much of the player's exp should be saved?
+  # Value 0.1 -> 1 (all)
+  # ---------------------
+  soulbind: true
+  # Should exp vouchers spawned by dying be soulbound
+  # -------------------------------------------------
+  enable_command: true
+  # Should /giveexpvoucher be enabled?
+# =======================================
+removeinfos:
+  enable_command: true
+  # Should /removeinfos be enabled?
+# =======================================
+gtp:
+  enable_command: true
+  # Should /gtp be enabled?
+# =======================================
+keepinventory:
+  enable_command: true
+  # Should /keepinventory be enabled?
+# =======================================
+opengrave:
+  enable_command: true
+  # Should /opengrave be enabled?
+  # --------------------------------
+  enable_force: true
+  # Should "/opengrave --force" be enabled?
+# =======================================
+soulbound:
+  enable_command: true
+  # Should /soulbind be enabled?
+  # ----------------------------
+  prevent_dropping: false
+  # Should dropping soulbound items be impossible
+# =================================
+# The end.
+# That's it
+# =================================

@@ -8,9 +8,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import local.mm2pl.graves.commands.CommandExpVoucher;
+import local.mm2pl.graves.commands.CommandForceOpenGrave;
 import local.mm2pl.graves.commands.CommandGraveTeleport;
 import local.mm2pl.graves.commands.CommandKeepInventory;
 import local.mm2pl.graves.commands.CommandRemoveInfos;
+import local.mm2pl.graves.commands.CommandSoulbind;
 import local.mm2pl.graves.commands.DisabledCommand;
 
 public class GraveMain extends JavaPlugin{
@@ -20,21 +22,29 @@ public class GraveMain extends JavaPlugin{
     public static Map<String, Boolean> keepinventory;
     public static final String graveRegex = "'s grave\\. \\([0-9][0-9]:[0-9][0-9] [0-9]+\\.[0-9]+\\.[0-9]+\\)";
 //    public void saveConfig() {
+//        config = new YamlConfiguration();
 //        configf = new File(getDataFolder(), "config.yml");
 //        if (!configf.exists()) {
 //            configf.getParentFile().mkdirs();
-////            saveResource("config.yml", false);
+//            saveResource("config.yml", false);
+//            try{
+//                config.load(configf);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }else {
 //        }
-//        config.save(configf);
-////        config = new YamlConfiguration();
-////        try
-////        {
-////            config.load(configf);
-////        } catch (Exception e)
-////        {
-////            e.printStackTrace();
-////        }
+//        try{
+//            config.save(configf);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        
 //    }
+    public static boolean checkSoulbound(String string)
+    {
+        return string.equalsIgnoreCase("§6Soulbound") || string.equalsIgnoreCase("§0gSoulbound") || string.equalsIgnoreCase("§6Soulbound§r") || string.equalsIgnoreCase("§6Soulbound§r");
+    }
     @Override
     public void onEnable() {
         keepinventory = new HashMap<String, Boolean>();
@@ -47,8 +57,16 @@ public class GraveMain extends JavaPlugin{
         config.addDefault("expvoucher.enable_command", true);
         
         config.addDefault("removeinfos.enable_command",true);
+        
         config.addDefault("gtp.enable_command", true);
+        
         config.addDefault("keepinventory.enable_command", true);
+        
+        config.addDefault("opengrave.enable_command", true);
+        config.addDefault("opengrave.enable_force", true);
+        
+        config.addDefault("soulbound.enable_command", true);
+        config.addDefault("soulbound.prevent_dropping", false);
         config.options().copyDefaults(true);
         saveConfig();
         
@@ -76,6 +94,18 @@ public class GraveMain extends JavaPlugin{
             this.getCommand("removeinfos").setExecutor(new CommandRemoveInfos());
         }else {
             this.getCommand("removeinfos").setExecutor(new DisabledCommand());
+        }
+        if(config.getBoolean("opengrave.enable_command"))
+        {
+            this.getCommand("opengrave").setExecutor(new CommandForceOpenGrave());
+        }else {
+            this.getCommand("opengrave").setExecutor(new DisabledCommand());
+        }
+        if(config.getBoolean("soulbound.enable_command"))
+        {
+            this.getCommand("soulbind").setExecutor(new CommandSoulbind());
+        }else {
+            this.getCommand("soulbind").setExecutor(new DisabledCommand());
         }
     }
     public void onDisable() {
