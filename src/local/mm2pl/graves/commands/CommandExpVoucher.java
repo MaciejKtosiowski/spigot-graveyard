@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import local.mm2pl.graves.GraveMain;
+
 public class CommandExpVoucher implements CommandExecutor{
 
     @Override
@@ -24,22 +26,23 @@ public class CommandExpVoucher implements CommandExecutor{
             }
             if(!(args[0].matches("[0-9]+")))
             {
-                sender.sendMessage("§4Argument 1: must be numerical§r");
+                sender.sendMessage(String.format(GraveMain.lang.getString("command.argnum"), 1));
+//                sender.sendMessage("§4Argument 1: must be numerical§r");
                 return true;
             }
             Player pl = (Player) sender;
             ItemStack voucher = new ItemStack(Material.PAPER, 1);
             ItemMeta meta = voucher.getItemMeta();
-            meta.setDisplayName("EXP voucher.");
+            meta.setDisplayName(GraveMain.lang.getString("expvoucher.spawned_name"));
             List<String> lore = new LinkedList<String>();
             lore.add("§0g"+args[0]);
-            lore.add("§aCreated: "+new Date(System.currentTimeMillis()).toString());
+            lore.add(String.format(GraveMain.lang.getString("expvoucher.created"), new Date(System.currentTimeMillis()).toString()));
             meta.setLore(lore);
             voucher.setItemMeta(meta);
             pl.getInventory().addItem(voucher);
             return true;
         }else {
-            sender.sendMessage("§4This command can only be run by players in-game.§r");
+            sender.sendMessage(GraveMain.lang.getString("command.ingame"));
             return true;
         }
     }

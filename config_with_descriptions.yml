@@ -37,6 +37,50 @@ soulbound:
   # ----------------------------
   prevent_dropping: false
   # Should dropping soulbound items be impossible
+# ===============================================
+unbreakable_graves: true
+# Should graves be unbreakable
+# ============================
+death_cause:
+  pvp: no_override
+  # pvp override
+  # options; no_override, open, normal, keep_inventory
+  # ---------------------------------------------------
+
+  # Last damage cause
+  # options; open, normal, keep_inventory
+  BLOCK_EXPLOSION: normal
+  CONTACT: normal
+  CRAMMING: normal
+  CUSTOM: normal
+  DRAGON_BREATH: normal
+  DROWNING: normal
+  DRYOUT: normal
+  ENTITY_ATTACK: normal
+  ENTITY_EXPLOSION: normal
+  ENTITY_SWEEP_ATTACK: normal
+  FALL: normal
+  FALLING_BLOCK: normal
+  FIRE: normal
+  FIRE_TICK: normal
+  FLY_INTO_WALL: normal
+  HOT_FLOOR: normal
+  LAVA: normal
+  LIGHTNING: normal
+  MAGIC: normal
+  POISON: normal
+  PROJECTILE: normal
+  STARVATION: normal
+  SUFFOCATION: normal
+
+  SUICIDE: normal
+  # NOTE This one seems to be unused.
+  # NOTE For /kill VOID is used instead.
+
+  THORNS: normal
+  VOID: normal
+  WITHER: normal
+  # ----------------------------------------
 # =================================
 # The end.
 # That's it

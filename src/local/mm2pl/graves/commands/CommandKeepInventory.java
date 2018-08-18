@@ -16,10 +16,10 @@ public class CommandKeepInventory implements CommandExecutor{
             if(sender instanceof Player)
             {
                 GraveMain.keepinventory.put(sender.getName(), true);
-                sender.sendMessage("§6Temporarly enabled keepinventory for §aself§r");
+                sender.sendMessage(GraveMain.lang.getString("keepinventory.enabled.self"));
                 return true;
             }else {
-                sender.sendMessage("§4Cannot enable keepinventory for §aCONSOLE§4: §aCONSOLE§4 is not an in-game player§r");
+                sender.sendMessage(GraveMain.lang.getString("keepinventory.error.console"));
                 return true;
             }
         }else {
@@ -37,11 +37,11 @@ public class CommandKeepInventory implements CommandExecutor{
                 pl = Bukkit.getPlayer(args[0]);
             } catch (Exception e)
             {
-                sender.sendMessage("§4Argument 1 must be an in-game player.§r");
+                sender.sendMessage(String.format(GraveMain.lang.getString("command.argplr"), 1));
                 return true;
             }
             GraveMain.keepinventory.put(pl.getName(), true);
-            sender.sendMessage("§6Temporarly enabled keepinventory for §a"+args[0]+"§r");
+            sender.sendMessage(String.format(GraveMain.lang.getString("keepinventory.enabled.other"), args[0]));
             return true;
         }
     }

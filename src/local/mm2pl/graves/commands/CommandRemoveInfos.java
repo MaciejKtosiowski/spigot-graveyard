@@ -8,6 +8,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import local.mm2pl.graves.GraveMain;
+
 public class CommandRemoveInfos implements CommandExecutor{
 
     @Override
@@ -22,12 +24,13 @@ public class CommandRemoveInfos implements CommandExecutor{
                 {
                     continue;
                 }
+                String coords = GraveMain.lang.getString("deathinfo.coords");
                 if(item.hasItemMeta())
                 {
                     ItemMeta meta = item.getItemMeta();
                     if(meta.hasDisplayName() && meta.hasLore())
                     {
-                        if(meta.getDisplayName().matches("Death info \\- [0-9]+") && meta.getLore().contains("Coords:"))
+                        if(meta.getDisplayName().matches(GraveMain.lockRegex) && meta.getLore().contains(coords) && meta.getLore().contains("§0GRDeathinfo"))
                         {
                             inv.remove(item);
                         }

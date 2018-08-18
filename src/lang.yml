@@ -1,0 +1,88 @@
+misc:
+    language:
+        name: "English"
+        authors: "Mm2PL"
+        # ^ Your name goes here ^
+regex:
+    lock: "Death info - [0-9]+"
+    # NOTE has to be able to match a string generated from deathinfo.name
+
+    grave: "'s grave\\. \\([0-9][0-9]:[0-9][0-9] [0-9]+\\.[0-9]+\\.[0-9]+\\)"
+    # NOTE has to be able to match a string generated from grave.chest_name
+
+    deathinfo: "[XYZ:]+ "
+    # NOTE has to be able to match a string generated from deathinfo.coords_2
+dateformat: "HH:mm d.M.y"
+grave:
+    cannot_break: "§4You cannot break this grave."
+    after_remove: "§aThe grave disappears..."
+    chest_name: "%s's grave. (%s)"
+    # %s (1) player name
+    # %s (2) date (see dateformat)
+    failed_to_place:
+        admin: "§4[ERR] Failed to place a grave for §a%s"
+        player:
+            title: "§4Failed to place the grave."
+            subtitle: ""
+deathinfo:
+    coords: "Coords:"
+    coords_2: "X: %d Y: %d Z: %d"
+    # See regexp.deathinfo
+    exp: "EXP: %d"
+    name: "Death info - %s"
+    # NOTE do not touch the %s
+    # NOTE %s - here the timestamp, (needs no separators)
+    
+    
+expvoucher:
+    death_name: "EXP voucher (death)"
+    spawned_name: "EXP voucher"
+    description: "Right-click to reedem the experience"
+    value: "Value: %s"
+    created: "§aCreated: %s"
+
+opengrave:
+    force:
+        disabled: "§4Cannot force: the config option is disabled"
+        applied: "§7[Force opening]"
+        no_permission: "§4Cannot force: You have to be §6OP§4 or have the permission §6\"graveyard.opengrave.force\"§r"
+        admin_msg: "§b%s just forcfully opened a grave."
+    error:
+        not_a_grave: "§4Cannot unlock: not a grave."
+        other: "§4Cannot unlock"
+        not_locked: "§aThis chest is not locked."
+        not_owned: "§4This is not your grave"
+        not_owned_force: "§aUse \"/opengrave --force\" to force."
+    success:
+        changing: "§aChanging lock from §6\"%s\"§a to §6\"\"§a."
+        
+command:
+    argnum: "§4Argument %s: must be numerical.§r"
+    argplr: "§4Argument %s: must be an in-game player.§r"
+    ingame: "§4This command can only be run by players in-game.§r"
+    disabled:
+        config: "§4This command is not enabled.§r"
+        config_err: "§4[Graveyard] Please check the logs, there is an error in the config.yml file.§r"
+
+soulbound:
+    no_dropping: "§4You cannot drop soulbound items."
+    ench_name: "§6Soulbound"
+soulbind:
+    error:
+        holditem: "§4You must hold an item§r"
+        already_soulbound: "§aThis item is already soulbound§r"
+    success:
+        soulbound_added: "§aYour item is now §6soulbound§r"
+        soulbound_removed: "§aYour item is not §6soulbound§a anymore.§r"
+gtp:
+    not_a_deathinfo: "§4Hold a death info in you main hand.§r"
+keepinventory:
+    title: "§k.§r"
+    subtitle: "§aKeep inventory was enabled for you"
+    error:
+        console: "§4Cannot enable keepinventory for §aCONSOLE§4: §aCONSOLE§4 is not an in-game player§r"
+    enabled:
+        self: "§6Temporarly enabled keepinventory for §aself§r"
+        other: "§6Temporarly enabled keepinventory for §a%s§r"
+
+

@@ -9,7 +9,7 @@
 			<arg value="/home/maciek/MacieksBans/Graveyard/bin/"/>
 		</exec>
 		<exec executable="/bin/cp">
-			<arg value="/home/maciek/MacieksBans/Graveyard/src/config.yml"/>
+			<arg value="/home/maciek/MacieksBans/Graveyard/src/lang.yml"/>
 			<arg value="/home/maciek/MacieksBans/Graveyard/bin/"/>
 		</exec>
 		<echo>[   ]Building the jar</echo>

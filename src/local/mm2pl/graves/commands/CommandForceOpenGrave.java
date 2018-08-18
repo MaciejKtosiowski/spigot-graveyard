@@ -24,15 +24,15 @@ public class CommandForceOpenGrave implements CommandExecutor{
                 {
                     if(!GraveMain.config.getBoolean("opengrave.enable_force"))
                     {
-                        sender.sendMessage("§4Cannot force: the config option is disabled");
+                        sender.sendMessage(GraveMain.lang.getString("opengrave.force.disabled"));
                     }
                     if(sender.isOp() || sender.hasPermission("graveyard.opengrave.force"))
                     {
                         isForced = true;
-                        sender.sendMessage("§7[Force opening]");
+                        sender.sendMessage(GraveMain.lang.getString("opengrave.force.disabled"));
                         
                     }else {
-                        sender.sendMessage("§4Cannot force: You have to be §6OP§4 or have the permission §6\"graveyard.opengrave.force\"§r");
+                        sender.sendMessage(GraveMain.lang.getString("opengrave.force.no_permission"));
                         return true;
                     }
                     
@@ -47,7 +47,8 @@ public class CommandForceOpenGrave implements CommandExecutor{
                 block2 = block.getRelative(BlockFace.WEST);
                 if(block2.getType() != Material.CHEST)
                 {
-                    pl.sendMessage("§4Cannot unlock: not a grave.");
+                    pl.sendMessage(GraveMain.lang.getString("opengrave.error.not_a_grave"));
+                    return true;
                 }
             }
             if(block.getType() == Material.CHEST)
@@ -56,7 +57,7 @@ public class CommandForceOpenGrave implements CommandExecutor{
                 Chest chest2 = (Chest) block2.getState();
                 if(chest.getCustomName() == null)
                 {
-                    pl.sendMessage("§4Cannot unlock.");
+                    pl.sendMessage(GraveMain.lang.getString("opengrave.error.other"));
                     return true;
                 }
                 String name = chest.getCustomName();
@@ -66,34 +67,35 @@ public class CommandForceOpenGrave implements CommandExecutor{
                 {
                     if(chest.getLock() == null)
                     {
-                        pl.sendMessage("§aThis chest is not locked.");
+                        pl.sendMessage(GraveMain.lang.getString("opengrave.error.not_locked"));
                         return true;
                     }
                     if(chest.getLock().equals(""))
                     {
-                        pl.sendMessage("§aThis chest is not locked.");
+                        pl.sendMessage(GraveMain.lang.getString("opengrave.error.not_locked"));
                         return true;
                     }
-                    pl.sendMessage("§aChanging lock from §6\""+chest.getLock()+"\"§a to §6\"\"§a.");
+                    pl.sendMessage(String.format(GraveMain.lang.getString("opengrave.success.changing"), chest.getLock()));
                     chest.setLock(null);
                     chest2.setLock(null);
                     chest.update();
                     chest2.update();
                     if(isForced)
                     {
-                        Bukkit.broadcast("§b"+sender.getName()+" just forcfully opened a grave.", "graveyard.msgs");
+                        Bukkit.broadcast(String.format(GraveMain.lang.getString("opengrave.force.admin_msg"), sender.getName()), "graveyard.msgs");
                     }
                     return true;
                 }else {
                     if(!personal && isGrave && !isForced)
                     {
-                        pl.sendMessage("§4This is not your grave");
+                        pl.sendMessage(GraveMain.lang.getString("opengrave.error.not_owned"));
                         if(pl.hasPermission("graveyard.opengrave.force"))
                         {
-                            pl.sendMessage("§aUse \"/opengrave --force\" to force.");
+                            pl.sendMessage(GraveMain.lang.getString("opengrave.error.not_owned_force"));
                         }
                     }else {
-                        pl.sendMessage("§4The block you are looking at is not a grave.");
+                        pl.sendMessage(GraveMain.lang.getString("opengrave.error.other"));
+//                        pl.sendMessage("§4The block you are looking at is not a grave.");/
                     }
                 }
             }

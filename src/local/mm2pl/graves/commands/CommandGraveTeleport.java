@@ -9,6 +9,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import local.mm2pl.graves.GraveMain;
+
 public class CommandGraveTeleport implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
@@ -18,18 +20,18 @@ public class CommandGraveTeleport implements CommandExecutor{
             ItemStack item = pl.getEquipment().getItemInMainHand();
             if(!(item.hasItemMeta()))
             {
-                sender.sendMessage("§4Hold a death info in you main hand.§r");
+                sender.sendMessage(GraveMain.lang.getString("gtp.not_a_deathinfo"));
                 return true;
             }
             ItemMeta meta = item.getItemMeta();
             if(!(meta.hasDisplayName()))
             {
-                sender.sendMessage("§4Hold a death info in you main hand.§r");
+                sender.sendMessage(GraveMain.lang.getString("gtp.not_a_deathinfo"));
                 return true;
             }
             if(!(meta.hasLore()))
             {
-                sender.sendMessage("§4Hold a death info in you main hand.§r");
+                sender.sendMessage(GraveMain.lang.getString("gtp.not_a_deathinfo"));
                 return true;
             }
             boolean isNextLine = false;
@@ -40,7 +42,7 @@ public class CommandGraveTeleport implements CommandExecutor{
                     int x;
                     int y;
                     int z;
-                    String templine = line.replaceAll("[XYZ:]+ ", "");
+                    String templine = line.replaceAll(GraveMain.lang.getString("regex.deathinfo"), "");
                     String[] spl = templine.split(" ");
                     if(!(spl.length == 3))
                     {
@@ -52,7 +54,7 @@ public class CommandGraveTeleport implements CommandExecutor{
                     pl.teleport(new Location(pl.getWorld(), x, y, z), TeleportCause.COMMAND);
                     return true;
                 }
-                if(line.equalsIgnoreCase("Coords:"))
+                if(line.equalsIgnoreCase(GraveMain.lang.getString("deathinfo.coords")))
                 {
                     isNextLine = true;
                 }

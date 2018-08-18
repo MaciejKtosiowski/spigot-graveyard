@@ -31,6 +31,11 @@ public class CommandSoulbind implements CommandExecutor{
             }
             Player pl = (Player) sender;
             ItemStack item = pl.getEquipment().getItemInMainHand();
+            if(item == null)
+            {
+                pl.sendMessage(GraveMain.lang.getString("soulbind.error.holditem"));
+                return true;
+            }
             ItemMeta meta = item.getItemMeta();
             List<String> lore;
             if(meta.hasLore())
@@ -45,15 +50,15 @@ public class CommandSoulbind implements CommandExecutor{
                 {
                     if(string.equalsIgnoreCase("§0gSoulbound"))
                     {
-                        pl.sendMessage("§aThis item is already soulbound§r");
+                        pl.sendMessage(GraveMain.lang.getString("soulbind.error.holditem"));
                         return true;
                     }
                 }
-                lore.add("§6Soulbound");
+                lore.add(GraveMain.lang.getString("soulbound.ench_name"));
                 lore.add("§0gSoulbound");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
-                pl.sendMessage("§aYour item is now §6soulbound§r");
+                pl.sendMessage(GraveMain.lang.getString("soulbind.success.soulbound_added"));
             }else {
                 List<String> newlore = new LinkedList<String>();
                 for (String string : lore)
@@ -66,11 +71,11 @@ public class CommandSoulbind implements CommandExecutor{
                 }
                 meta.setLore(newlore);
                 item.setItemMeta(meta);
-                pl.sendMessage("§aYour item is not soulbound anymore.§r");
+                pl.sendMessage(GraveMain.lang.getString("soulbind.success.soulbound_removed"));
             }
             return true;
         }else {
-            sender.sendMessage("§4You must be a player ingame to use this command.§r");
+            sender.sendMessage(GraveMain.lang.getString("command.ingame"));
             return true;
         }
     }

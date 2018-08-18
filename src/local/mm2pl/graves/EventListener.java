@@ -17,6 +17,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -28,6 +31,40 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class EventListener implements Listener{
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e)
+    {
+        if(!GraveMain.config.getBoolean("unbreakable_graves"))
+        {
+            return;
+        }
+        Player pl = e.getPlayer();
+        if(e.getBlock().getType() != Material.CHEST)
+        {
+            return;
+        }
+        Block block = e.getBlock();
+        org.bukkit.block.Chest chest;
+        chest = (org.bukkit.block.Chest) block.getState();
+        if(block.getRelative(BlockFace.EAST).getType() == Material.CHEST)
+        {
+            chest = (org.bukkit.block.Chest) block.getRelative(BlockFace.EAST).getState();
+        }
+        if(chest.getLock().matches(GraveMain.lockRegex))
+        {
+            e.setCancelled(true);
+            try
+            {
+                if(chest.getCustomName().matches(pl.getName()+GraveMain.graveRegex))
+                {
+                    e.setCancelled(false);
+                    return;
+                }
+            } catch (Exception e2) { }
+            pl.sendMessage(GraveMain.lang.getString("grave.cannon_break"));
+//            pl.sendMessage("§4You cannot break this grave.");
+        }
+    }
     @EventHandler
     public void onPlayerItemUse(PlayerInteractEvent e)
     {
@@ -112,7 +149,8 @@ public class EventListener implements Listener{
                 }
                 if(isEmpty)
                 {
-                    pl.sendMessage("§aThe grave disappears...");
+                    pl.sendMessage(GraveMain.lang.getString("grave.after_remove"));
+//                    pl.sendMessage("§aThe grave disappears...");
                     loc.getBlock().getRelative(BlockFace.EAST).setType(Material.AIR);
                     loc.getBlock().setType(Material.AIR);
                     EntityEquipment eq = pl.getEquipment();
@@ -155,7 +193,8 @@ public class EventListener implements Listener{
             {
                 if(GraveMain.checkSoulbound(line))
                 {
-                    e.getPlayer().sendMessage("§4You cannot drop soulbound items.§r");
+                    e.getPlayer().sendMessage(GraveMain.lang.getString("soulbound.no_dropping"));
+//                    e.getPlayer().sendMessage("§4You cannot drop soulbound items.§r");
                     e.setCancelled(true);
                     return;
                 }
@@ -165,14 +204,36 @@ public class EventListener implements Listener{
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e)
     {
-        
         e.setKeepInventory(true);
         e.setKeepLevel(true);
         Player pl = (Player) e.getEntity();
+        String cause = "?";
+        EntityDamageEvent dmge1 = pl.getLastDamageCause();
+        String behavior = GraveMain.NORMAL;
+        if (dmge1 instanceof EntityDamageByEntityEvent)
+        {
+            EntityDamageByEntityEvent dmge = (EntityDamageByEntityEvent) dmge1;
+            cause = dmge.getCause().toString();
+            behavior = GraveMain.config.getString("death_cause."+cause);
+            if(dmge.getDamager() instanceof Player)
+            {
+                if(!GraveMain.config.getString("death_cause.pvp").equalsIgnoreCase(GraveMain.NO_OVERRIDE))
+                {
+                    behavior = GraveMain.config.getString("death_cause.pvp");
+                }
+            }
+        }else {
+            cause = dmge1.getCause().toString();
+        }
+        
+        if(behavior.equalsIgnoreCase(GraveMain.KEEP_INVENTORY))
+        {
+            return;
+        }
         if(GraveMain.keepinventory.getOrDefault(pl.getName(), false))
         {
             GraveMain.keepinventory.put(pl.getName(), false);
-            pl.sendTitle("§k.§r", "§aKeep inventory was enabled for you§r", 20, 60, 20);
+            pl.sendTitle(GraveMain.lang.getString("keepinventory.title"), GraveMain.lang.getString("keepinventory.subtitle"), 20, 60, 20);
             return;
         }
         Inventory inv = pl.getInventory();
@@ -187,14 +248,14 @@ public class EventListener implements Listener{
         Block block = loc.getWorld().getBlockAt(loc);
         Block block2 = block.getRelative(BlockFace.EAST);
         int iters = 0;
-        while(!block.isEmpty() || !block2.isEmpty())
+        while(!(block.isEmpty() && block2.isEmpty()) || loc.getBlockY() < 0)
         {
             iters++;
-            if(iters >= 1024)
+            if(iters >= 1024 && loc.getBlockY() > 0)
             {
                 //Failed to find a place for the grave, prevent a hang and return.
-                Bukkit.broadcast("§4[ERR] Failed to place a grave for §a"+pl.getName()+"§r", "graveyard.msgs");
-                pl.sendTitle("§4Failed to place the grave.", "", 20, 60, 20);
+                Bukkit.broadcast(String.format(GraveMain.lang.getString("grave.failed_to_place.admin"), pl.getName()), "graveyard.msgs");
+                pl.sendTitle(GraveMain.lang.getString("grave.failed_to_place.player.title"), GraveMain.lang.getString("grave.failed_to_place.player.title"), 20, 60, 20);
                 return;
             }
             loc = loc.add(0, 1, 0);
@@ -204,10 +265,18 @@ public class EventListener implements Listener{
         
         block.setType(Material.CHEST, false);
         block2.setType(Material.CHEST, false);
-        Chest chest1 = (Chest) block.getBlockData();
-        chest1.setFacing(BlockFace.NORTH);
-        chest1.setType(Chest.Type.LEFT);
-        block2.setBlockData(chest1);
+        try
+        {
+            Chest chest1 = (Chest) block.getBlockData();
+            chest1.setFacing(BlockFace.NORTH);
+            chest1.setType(Chest.Type.LEFT);
+            block2.setBlockData(chest1);
+        } catch (Exception e2)
+        {
+            return; // void, keep_inventory
+        }
+        
+        
         
         Chest chest2 = (Chest) block2.getBlockData();
         chest2.setFacing(BlockFace.NORTH);
@@ -222,33 +291,36 @@ public class EventListener implements Listener{
         List<String> deathInfoList = new LinkedList<String>();
 //        deathInfoList.add("Name: "+pl.getName());
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm d.M.y");
+        SimpleDateFormat formatter = new SimpleDateFormat(GraveMain.lang.getString("dateformat"));
         String today = formatter.format(date);
         deathInfoList.add(e.getDeathMessage());
         deathInfoList.add(today);
-        deathInfoList.add("Coords:");
-        deathInfoList.add("X: "+String.valueOf(loc.getBlockX())+" Y: "+String.valueOf(loc.getBlockY())+" Z: "+String.valueOf(loc.getBlockZ()));
-        deathInfoList.add("EXP: "+String.valueOf(exp));
-        deathInfoList.add("§o§6Soulbound§r");
+        deathInfoList.add(GraveMain.lang.getString("deathinfo.coords"));
+        deathInfoList.add(String.format(GraveMain.lang.getString("deathinfo.coords_2"), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+//        deathInfoList.add("X: "+String.valueOf(loc.getBlockX())+" Y: "+String.valueOf(loc.getBlockY())+" Z: "+String.valueOf(loc.getBlockZ()));
+        deathInfoList.add(String.format(GraveMain.lang.getString("deathinfo.exp"), exp));
+//        deathInfoList.add("EXP: "+String.valueOf(exp));
+        deathInfoList.add(GraveMain.lang.getString("soulbound.ench_name"));
+//        deathInfoList.add("§6Soulbound§r");
         deathInfoList.add("§0gSoulbound");
         deathInfoList.add("§0GRDeathinfo");
         dmeta.setLore(deathInfoList);
         
-        String lockstr = "Death info - "+String.valueOf(System.currentTimeMillis());
+//        String lockstr = "Death info - "+String.valueOf(System.currentTimeMillis());
+        String lockstr = String.format(GraveMain.lang.getString("deathinfo.name"), System.currentTimeMillis());
         dmeta.setDisplayName(lockstr);
-        chest3.setLock(lockstr);
+        if(!behavior.equalsIgnoreCase(GraveMain.OPEN))
+        {
+            chest3.setLock(lockstr);
+        }
 //        Bukkit.broadcastMessage(String.valueOf(chest3.isLocked()));
 //        Bukkit.broadcastMessage(String.valueOf(chest3.getLock()));
-        chest3.setCustomName(pl.getName()+"'s grave. ("+today+")");
+        chest3.setCustomName(String.format(GraveMain.lang.getString("grave.chest_name"), pl.getName(), today));
+//        chest3.setCustomName(pl.getName()+"'s grave. ("+today+")");
         chest3.update();
         deathInfocard.setItemMeta(dmeta);
-//        chest3.update();
         Inventory binv = chest3.getInventory();
-//        ItemStack[] items = inv.getContents();
         List<ItemStack> savedItems = new LinkedList<ItemStack>();
-//        Bukkit.broadcastMessage(String.valueOf(items.length));
-//        binv.setContents(items);
-//        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
         binv.setContents(inv.getContents());
         
         for (int i = 0; i <= inv.getSize(); i++)
@@ -256,8 +328,6 @@ public class EventListener implements Listener{
             ItemStack item = inv.getItem(i);
             if(item == null)
             {
-//                Bukkit.broadcastMessage(String.valueOf(i));
-//                Bukkit.broadcastMessage("NULL");
                 continue;
             }
             if(item.hasItemMeta())
@@ -268,46 +338,37 @@ public class EventListener implements Listener{
                     List<String> lore = meta.getLore();
                     if(lore.contains("§0gSoulbound"))
                     {
-//                        ItemStack clone = new ItemStack(item);
-//                        clone.setItemMeta(meta);
-                        
                         savedItems.add(item);
                         binv.remove(item);
                     }
                 }
             }
-//            Bukkit.broadcastMessage(String.valueOf(i));
-//            Bukkit.broadcastMessage(item.getType().toString());
-//            if(!wasAdded)
-//            {
-//                binv.addItem(item);
-//            }
         }
-        
-//        Bukkit.broadcastMessage(String.valueOf(binv.getSize()));
-//        
-        
         
         if(GraveMain.config.getBoolean("expvoucher.spawn_on_death"))
         {
-//            Bukkit.broadcastMessage(String.valueOf(pl.getTotalExperience()));
-//            Bukkit.broadcastMessage(String.valueOf(pl.getExp()));
-//            Bukkit.broadcastMessage(String.valueOf(pl.getLevel()));
             pl.setTotalExperience(0);
             pl.setExp(0.0f);
             pl.setLevel(0);
             e.setDroppedExp(0);
             ItemStack voucher = new ItemStack(Material.PAPER, 1);
             ItemMeta meta2 = voucher.getItemMeta();
-            meta2.setDisplayName("EXP voucher. (death)");
+            meta2.setDisplayName(GraveMain.lang.getString("expvoucher.death_name"));
+//            meta2.setDisplayName("EXP voucher. (death)");
             List<String> lore = new LinkedList<String>();
-            lore.add("Right-click to reedem the experience");
+            lore.add(GraveMain.lang.getString("expvoucher.description"));
+//            lore.add("Right-click to reedem the experience");
+//            Bukkit.broadcastMessage(String.valueOf(exp));
             String value = String.valueOf(Math.round(exp*GraveMain.config.getDouble("expvoucher.value")));
-            lore.add("Value: "+value);
-            lore.add("§aCreated: "+new Date(System.currentTimeMillis()).toString());
+//            Bukkit.broadcastMessage(value);
+            lore.add(String.format(GraveMain.lang.getString("expvoucher.value"), value));
+//            lore.add("Value: "+value);
+            lore.add(String.format(GraveMain.lang.getString("expvoucher.created"), new Date(System.currentTimeMillis()).toString()));
+//            lore.add("§aCreated: "+new Date(System.currentTimeMillis()).toString());
             if(GraveMain.config.getBoolean("expvoucher.soulbind"))
             {
-                lore.add("§6Soulbound§r");
+                lore.add(GraveMain.lang.getString("soulbound.ench_name"));
+//                lore.add("§6Soulbound§r");
                 lore.add("§0gSoulbound");
             }
             lore.add("§0g"+value);
@@ -315,12 +376,6 @@ public class EventListener implements Listener{
             voucher.setItemMeta(meta2);
             binv.setItem(binv.getSize()-1, voucher);
         }
-        
-        
-//        if(1!=2)
-//        {
-//            return;
-//        }
         inv.clear();
         inv.addItem(deathInfocard);
         for (ItemStack item : savedItems)
