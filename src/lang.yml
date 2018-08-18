@@ -32,8 +32,7 @@ deathinfo:
     name: "Death info - %s"
     # NOTE do not touch the %s
     # NOTE %s - here the timestamp, (needs no separators)
-    
-    
+
 expvoucher:
     death_name: "EXP voucher (death)"
     spawned_name: "EXP voucher"
@@ -55,7 +54,7 @@ opengrave:
         not_owned_force: "§aUse \"/opengrave --force\" to force."
     success:
         changing: "§aChanging lock from §6\"%s\"§a to §6\"\"§a."
-        
+
 command:
     argnum: "§4Argument %s: must be numerical.§r"
     argplr: "§4Argument %s: must be an in-game player.§r"
@@ -67,6 +66,7 @@ command:
 soulbound:
     no_dropping: "§4You cannot drop soulbound items."
     ench_name: "§6Soulbound"
+
 soulbind:
     error:
         holditem: "§4You must hold an item§r"
@@ -74,8 +74,10 @@ soulbind:
     success:
         soulbound_added: "§aYour item is now §6soulbound§r"
         soulbound_removed: "§aYour item is not §6soulbound§a anymore.§r"
+
 gtp:
     not_a_deathinfo: "§4Hold a death info in you main hand.§r"
+
 keepinventory:
     title: "§k.§r"
     subtitle: "§aKeep inventory was enabled for you"
@@ -84,5 +86,4 @@ keepinventory:
     enabled:
         self: "§6Temporarly enabled keepinventory for §aself§r"
         other: "§6Temporarly enabled keepinventory for §a%s§r"
-
 
